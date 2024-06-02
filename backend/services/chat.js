@@ -1,4 +1,5 @@
 const { ChatModel } = require('../models');
+const { OpenAIUtils } = require('../utils');
 
 const get = () => {
   return ChatModel.find({ is_deleted: false });
@@ -10,10 +11,14 @@ const getById = (id) => {
 
 const add = async (data) => {
   const chat = new ChatModel(data);
+  const message = await OpenAIUtils.createChat(chat.messages);
+  chat.messages.push(message);
   return chat.save();
 };
 
-const update = (id, chat) => {
+const update = async (id, chat) => {
+  const message = await OpenAIUtils.createChat(chat.messages);
+  chat.messages.push(message);
   return ChatModel.findByIdAndUpdate(id, chat, {
     new: true,
   });
