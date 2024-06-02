@@ -1,22 +1,26 @@
 const { ChatModel } = require('../models');
 
-const get = async () => {
+const get = () => {
   return ChatModel.find({ is_deleted: false });
 };
 
-const getById = async (id) => {
+const getById = (id) => {
   return ChatModel.findOne({ is_deleted: false, _id: id });
 };
 
-const update = async (chat) => {
-  return ChatModel.findByIdAndUpdate(chat.id, chat, {
+const add = async (data) => {
+  const chat = new ChatModel(data);
+  return chat.save();
+};
+
+const update = (id, chat) => {
+  return ChatModel.findByIdAndUpdate(id, chat, {
     new: true,
-    upsert: true,
   });
 };
 
-const remove = async (id) => {
+const remove = (id) => {
   return ChatModel.findByIdAndUpdate(id, { is_deleted: true });
 };
 
-module.exports = { get, getById, update, remove };
+module.exports = { get, getById, add, update, remove };

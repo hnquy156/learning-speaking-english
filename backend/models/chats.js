@@ -5,8 +5,8 @@ const schema = new mongoose.Schema(
     messages: {
       type: [
         {
-          role: String,
-          content: String,
+          role: { type: String, required: true },
+          content: { type: String, required: true },
         },
       ],
       required: true,
@@ -17,7 +17,12 @@ const schema = new mongoose.Schema(
     },
   },
   {
-    timestamps: true,
+    timestamps: {
+      createdAt: 'created_at',
+      updatedAt: 'updated_at',
+    },
+    toObject: true,
+    virtuals: true,
   }
 );
 

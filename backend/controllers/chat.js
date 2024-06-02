@@ -16,9 +16,17 @@ const getChat = async (req, res, next) => {
   }
 };
 
+const createChat = async (req, res, next) => {
+  try {
+    res.json({ data: await ChatService.add(req.body) });
+  } catch (e) {
+    next(e);
+  }
+};
+
 const updateChat = async (req, res, next) => {
   try {
-    res.json({ data: await ChatService.update(req.body) });
+    res.json({ data: await ChatService.update(req.params.id, req.body) });
   } catch (e) {
     next(e);
   }
@@ -33,4 +41,4 @@ const deleteChat = async (req, res, next) => {
   }
 };
 
-module.exports = { getChats, getChat, updateChat, deleteChat };
+module.exports = { getChats, getChat, createChat, updateChat, deleteChat };
