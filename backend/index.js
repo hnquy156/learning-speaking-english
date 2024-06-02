@@ -4,7 +4,10 @@ const {
   handleNotFound,
   handleServerError,
 } = require('./middlewares/handleErrors');
+const { connectMongodb } = require('./configs/mongodb');
 const app = express();
+
+connectMongodb();
 
 app.use(require('cors')());
 app.use(require('helmet')());
