@@ -17,7 +17,11 @@
 }
 
 body {
+  min-height: 100vh;
+  height: 100vh;
   color: rgb(var(--foreground-rgb));
+  display: flex;
+  flex-direction: column;
   background: linear-gradient(
       to bottom,
       transparent,
@@ -30,4 +34,8 @@ body {
   .text-balance {
     text-wrap: balance;
   }
+}
+
+.active {
+  background-color: rgb(118, 199, 236);
 }
