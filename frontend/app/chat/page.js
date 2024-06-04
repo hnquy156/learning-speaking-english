@@ -1,7 +1,8 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { createChat, getChat, getChats, updateChat } from './api';
+import { createChat, deleteChat, getChat, getChats, updateChat } from './api';
 import Spinner from '../components/Spinner';
+import DeleteIcon from '../components/icons/DeleteIcon';
 
 export default function Chat() {
   const [chats, setChats] = useState([]);
@@ -62,6 +63,15 @@ export default function Chat() {
     setSelectedChat(res.data);
   };
 
+  const handleDeleteChat = async (id) => {
+    const res = window.confirm('Are you sure to delete this chat?');
+    if (res) {
+      await deleteChat(id);
+      await fetchAllChats();
+      if (id === selectedChat?._id) setSelectedChat(null);
+    }
+  };
+
   return (
     <div className="grid grid-cols-12 h-full">
       <div className="col-span-3 bg-slate-50 h-full flex flex-col">
@@ -73,9 +83,19 @@ export default function Chat() {
         </button>
         <ul>
           {chats.map((chat) => (
-            <li key={chat._id} onClick={() => handleViewChat(chat._id)}>
-              {chat.messages[1].content}
-            </li>
+            <div key={chat._id} className="group m-2 p-1">
+              <li
+                className="hover:bg-slate-100 cursor-pointer line-clamp-2 hover:line-clamp-4"
+                onClick={() => handleViewChat(chat._id)}
+              >
+                {chat.messages[1].content}
+              </li>
+              <div className="hidden group-hover:flex justify-end mr-4">
+                <button onClick={() => handleDeleteChat(chat._id)}>
+                  <DeleteIcon />
+                </button>
+              </div>
+            </div>
           ))}
         </ul>
       </div>
