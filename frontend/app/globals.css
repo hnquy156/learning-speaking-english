@@ -39,3 +39,7 @@ body {
 .active {
   background-color: rgb(118, 199, 236);
 }
+
+.max-h-screen-80 {
+  max-height: 80vh;
+}

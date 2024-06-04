@@ -26,6 +26,11 @@ export default function Chat() {
 
   useEffect(() => {
     setMessages(selectedChat?.messages || []);
+    const chatbox = document.getElementById('chatbox');
+    const timeout = setTimeout(() => {
+      chatbox.scrollTo({ top: chatbox.scrollHeight, behavior: 'smooth' });
+    }, 300);
+    return () => clearTimeout(timeout);
   }, [selectedChat]);
 
   const handleKeyDown = async (event) => {
@@ -76,7 +81,10 @@ export default function Chat() {
       </div>
       <div className="col-span-9 bg-white flex flex-col justify-between p-4">
         <div className="font-bold text-2xl">Chat Content</div>
-        <div className="flex flex-col justify-start grow mb-8">
+        <div
+          className="flex flex-col justify-start grow mb-8 overflow-y-auto max-h-screen-80"
+          id="chatbox"
+        >
           {messages.map((msg) => (
             <div
               key={msg._id}
