@@ -33,42 +33,58 @@ export default function Chat() {
   }, [selectedChat]);
 
   const fetchAllChats = async () => {
-    const res = await getChats();
-    setChats(res.data);
+    try {
+      const res = await getChats();
+      setChats(res.data);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const handleKeyDown = async (event) => {
-    if (event.key === 'Enter') {
-      if (!event.shiftKey) {
-        event.preventDefault();
-        console.log(
-          `Submit chat to server: ID - ${selectedChat?._id} - Content: ${event.target.value}`
-        );
-        setLoading(true);
-        const newChat = selectedChat?._id
-          ? await updateChat(selectedChat._id, event.target.value)
-          : await createChat(event.target.value);
+    try {
+      if (event.key === 'Enter') {
+        if (!event.shiftKey) {
+          event.preventDefault();
+          console.log(
+            `Submit chat to server: ID - ${selectedChat?._id} - Content: ${event.target.value}`
+          );
+          setLoading(true);
+          const newChat = selectedChat?._id
+            ? await updateChat(selectedChat._id, event.target.value)
+            : await createChat(event.target.value);
 
-        setSelectedChat(newChat);
-        event.target.value = '';
-        setLoading(false);
+          setSelectedChat(newChat);
+          event.target.value = '';
+          setLoading(false);
 
-        if (!selectedChat?._id) fetchAllChats();
+          if (!selectedChat?._id) fetchAllChats();
+        }
       }
+    } catch (error) {
+      console.error(error);
     }
   };
 
   const handleViewChat = async (id) => {
-    const res = await getChat(id);
-    setSelectedChat(res.data);
+    try {
+      const res = await getChat(id);
+      setSelectedChat(res.data);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const handleDeleteChat = async (id) => {
-    const res = window.confirm('Are you sure to delete this chat?');
-    if (res) {
-      await deleteChat(id);
-      await fetchAllChats();
-      if (id === selectedChat?._id) setSelectedChat(null);
+    try {
+      const res = window.confirm('Are you sure to delete this chat?');
+      if (res) {
+        await deleteChat(id);
+        await fetchAllChats();
+        if (id === selectedChat?._id) setSelectedChat(null);
+      }
+    } catch (error) {
+      console.error(error);
     }
   };
 
