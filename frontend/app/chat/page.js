@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { getChat, getChats, updateChat } from './api';
+import { createChat, getChat, getChats, updateChat } from './api';
 import Spinner from '../components/Spinner';
 
 export default function Chat() {
@@ -10,10 +10,7 @@ export default function Chat() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    (async () => {
-      const res = await getChats();
-      setChats(res.data);
-    })();
+    fetchAllChats();
 
     const text = document.getElementById('text');
     const resize = () => {
@@ -34,6 +31,11 @@ export default function Chat() {
     return () => clearTimeout(timeout);
   }, [selectedChat]);
 
+  const fetchAllChats = async () => {
+    const res = await getChats();
+    setChats(res.data);
+  };
+
   const handleKeyDown = async (event) => {
     if (event.key === 'Enter') {
       if (!event.shiftKey) {
@@ -42,18 +44,15 @@ export default function Chat() {
           `Submit chat to server: ID - ${selectedChat?._id} - Content: ${event.target.value}`
         );
         setLoading(true);
-        if (selectedChat?._id) {
-          // timeoutRef.current = setTimeout(() => loading(false), 3000);
-          const newChat = await updateChat(
-            selectedChat._id,
-            event.target.value
-          );
-          setSelectedChat(newChat);
-          event.target.value = '';
-        } else {
-          console.log('Create new chat');
-        }
+        const newChat = selectedChat?._id
+          ? await updateChat(selectedChat._id, event.target.value)
+          : await createChat(event.target.value);
+
+        setSelectedChat(newChat);
+        event.target.value = '';
         setLoading(false);
+
+        if (!selectedChat?._id) fetchAllChats();
       }
     }
   };
