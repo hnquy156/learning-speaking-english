@@ -9,10 +9,11 @@ const getById = (id) => {
   return ChatModel.findOne({ is_deleted: false, _id: id });
 };
 
-const add = async (data) => {
-  const chat = new ChatModel(data);
-  const message = await OpenAIUtils.createChat(chat.messages);
-  chat.messages.push(message);
+const add = async (content) => {
+  const messages = OpenAIUtils.initMessages(content);
+  const message = await OpenAIUtils.createChat(messages);
+  messages.push(message);
+  const chat = new ChatModel({ messages });
   return chat.save();
 };
 

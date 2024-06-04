@@ -60,6 +60,7 @@ export default function Chat() {
               className={`p-4 border-gray-300 rounded-xl border-2 mt-4 w-5/6 self-${
                 msg.role === 'user' ? 'start' : 'end'
               }`}
+              hidden={msg.role === 'system'}
             >
               <span className="capitalize">{msg.role}</span>: {msg.content}
             </div>

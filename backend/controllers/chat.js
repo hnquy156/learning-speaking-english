@@ -18,7 +18,8 @@ const getChat = async (req, res, next) => {
 
 const createChat = async (req, res, next) => {
   try {
-    res.json({ data: await ChatService.add(req.body) });
+    if (!req.body.message) throw new Error('You must provide a message');
+    res.json({ data: await ChatService.add(req.body.message) });
   } catch (e) {
     next(e);
   }
@@ -26,6 +27,7 @@ const createChat = async (req, res, next) => {
 
 const updateChat = async (req, res, next) => {
   try {
+    if (!req.body.message) throw new Error('You must provide a message');
     res.json({ data: await ChatService.update(req.params.id, req.body) });
   } catch (e) {
     next(e);

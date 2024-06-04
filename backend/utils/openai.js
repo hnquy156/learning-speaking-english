@@ -11,11 +11,6 @@ const createChat = async (data) => {
     role: message.role,
     content: message.content,
   }));
-  messages.unshift({
-    role: 'system',
-    content:
-      'you are a people, you will respond messages of this user shortly, precisely. In addition, You have to ask them questions related to this conversation or suggest them to give some other questions about this conversation',
-  });
 
   const chatCompletion = await openai.chat.completions.create({
     messages,
@@ -25,6 +20,19 @@ const createChat = async (data) => {
   return chatCompletion.choices[0].message;
 };
 
+const initMessages = (content) => [
+  {
+    role: 'system',
+    content:
+      'you are a people, you will respond messages of this user shortly, precisely. In addition, You have to ask them questions related to this conversation or suggest them to give some other questions about this conversation',
+  },
+  {
+    role: 'user',
+    content,
+  },
+];
+
 module.exports = {
   createChat,
+  initMessages,
 };

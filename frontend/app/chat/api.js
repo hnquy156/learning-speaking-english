@@ -9,3 +9,4 @@ export const getChat = async (id) => {
   const res = await fetch(`${API_PREFIX}/chats/` + id);
   return res.json();
 };
+
