@@ -99,15 +99,18 @@ export default function Chat() {
         </button>
         <ul>
           {chats.map((chat) => (
-            <div key={chat._id} className="group m-2 p-1">
+            <div key={chat._id} className="group m-2 p-1 relative">
               <li
-                className="hover:bg-slate-100 cursor-pointer line-clamp-2 hover:line-clamp-4"
+                className="hover:bg-slate-100 cursor-pointer line-clamp-4"
                 onClick={() => handleViewChat(chat._id)}
               >
                 {chat.messages[1].content}
               </li>
-              <div className="hidden group-hover:flex justify-end mr-4">
-                <button onClick={() => handleDeleteChat(chat._id)}>
+              <div className="hidden group-hover:flex justify-end mr-4 absolute right-1 bottom-1/2 translate-y-1/2">
+                <button
+                  className="p-2 bg-slate-200 cursor-pointer opacity-70 rounded-full"
+                  onClick={() => handleDeleteChat(chat._id)}
+                >
                   <DeleteIcon />
                 </button>
               </div>
