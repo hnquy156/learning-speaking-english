@@ -17,12 +17,14 @@ const add = async (content) => {
   return chat.save();
 };
 
-const update = async (id, chat) => {
+const update = async (id, content) => {
+  const chat = await ChatModel.findById(id);
+  if (!chat) throw new Error('Can not find chat with id ' + id);
+
+  chat.messages.push({ role: 'user', content });
   const message = await OpenAIUtils.createChat(chat.messages);
   chat.messages.push(message);
-  return ChatModel.findByIdAndUpdate(id, chat, {
-    new: true,
-  });
+  return chat.save();
 };
 
 const remove = (id) => {

@@ -28,7 +28,9 @@ const createChat = async (req, res, next) => {
 const updateChat = async (req, res, next) => {
   try {
     if (!req.body.message) throw new Error('You must provide a message');
-    res.json({ data: await ChatService.update(req.params.id, req.body) });
+    res.json({
+      data: await ChatService.update(req.params.id, req.body.message),
+    });
   } catch (e) {
     next(e);
   }
