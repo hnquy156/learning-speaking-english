@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { getChat, getChats, updateChat } from './api';
+import Spinner from '../components/Spinner';
 
 export default function Chat() {
   const [chats, setChats] = useState([]);
@@ -97,6 +98,11 @@ export default function Chat() {
             </div>
           ))}
         </div>
+        {loading && (
+          <div className="self-center m-2">
+            <Spinner />
+          </div>
+        )}
         <textarea
           id="text"
           className="border-solid border-2 focus:outline-none focus:border-sky-500 rounded-xl min-h-20 max-h-60 w-4/6 self-center p-4"
