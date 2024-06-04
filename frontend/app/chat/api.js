@@ -1,7 +1,11 @@
-// 'use client';
-import { cache } from 'react';
+import { API_PREFIX } from '../utils/constant';
 
-export const getChats = cache(async () => {
-  let res = await fetch('http://localhost:5000/api/v1/chats');
+export const getChats = async () => {
+  const res = await fetch(`${API_PREFIX}/chats`);
   return res.json();
-});
+};
+
+export const getChat = async (id) => {
+  const res = await fetch(`${API_PREFIX}/chats/` + id);
+  return res.json();
+};

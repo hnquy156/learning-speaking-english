@@ -15,3 +15,5 @@ export const NAV_PATHS = [
     name: 'Words',
   },
 ];
+
+export const API_PREFIX = 'http://localhost:5000/api/v1';
