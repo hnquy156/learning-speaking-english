@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import SpeechRecognition, {
   useSpeechRecognition,
 } from 'react-speech-recognition';
@@ -15,13 +15,16 @@ export default function Chat() {
   const [selectedChat, setSelectedChat] = useState(null);
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [content, setContent] = useState('');
+  const recordingTimeout = useRef(null);
+  const finalTranscriptRef = useRef('');
   const {
-    transcript,
     listening,
     resetTranscript,
     browserSupportsSpeechRecognition,
     finalTranscript,
     interimTranscript,
+    transcript,
   } = useSpeechRecognition();
 
   useEffect(() => {
@@ -47,11 +50,31 @@ export default function Chat() {
   }, [selectedChat]);
 
   useEffect(() => {
-    if (browserSupportsSpeechRecognition && !listening) {
-      const text = document.getElementById('text');
-      text.value = `${text.value} ${finalTranscript}`.trim();
+    if (interimTranscript && listening) {
+      extendRecording();
     }
-  }, [listening]);
+  }, [interimTranscript]);
+
+  useEffect(() => {
+    finalTranscriptRef.current = finalTranscript;
+  }, [finalTranscript]);
+
+  const extendRecording = () => {
+    if (recordingTimeout.current) {
+      clearTimeout(recordingTimeout.current);
+    }
+    recordingTimeout.current = setTimeout(handleStopRecording, 3000);
+  };
+
+  const handleStopRecording = () => {
+    if (recordingTimeout.current) {
+      clearTimeout(recordingTimeout.current);
+      recordingTimeout.current = null;
+    }
+    setContent((c) => `${c} ${finalTranscriptRef.current}`.trim());
+    SpeechRecognition.stopListening();
+    resetTranscript();
+  };
 
   const fetchAllChats = async () => {
     try {
@@ -111,10 +134,11 @@ export default function Chat() {
 
   const handleRecord = async () => {
     if (listening) {
-      SpeechRecognition.stopListening();
+      handleStopRecording();
     } else {
-      SpeechRecognition.startListening();
-      // { continuous: true }
+      resetTranscript();
+      SpeechRecognition.startListening({ continuous: true });
+      extendRecording();
     }
   };
 
@@ -180,7 +204,10 @@ export default function Chat() {
             className="border-solid border-2 focus:outline-none focus:border-sky-500 rounded-xl w-full h-full p-4"
             rows={3}
             onKeyDown={handleKeyDown}
-            disabled={loading}
+            disabled={loading || listening}
+            value={content + (transcript ? ` ${transcript}` : '')}
+            onChange={(e) => setContent(e.target.value)}
+            onFocus={resetTranscript}
           />
           {loading && (
             <div className="self-center absolute right-1/2 bottom-1/2 translate-y-1/2 translate-x-1/2">
