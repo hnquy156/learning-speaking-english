@@ -37,7 +37,14 @@ export default function Chat() {
     };
     text.addEventListener('input', resize);
 
-    return () => text.removeEventListener('input', resize);
+    return () => {
+      text.removeEventListener('input', resize);
+      if (recordingTimeout.current) {
+        clearTimeout(recordingTimeout.current);
+        SpeechRecognition.stopListening();
+        resetTranscript();
+      }
+    };
   }, []);
 
   useEffect(() => {
@@ -99,7 +106,7 @@ export default function Chat() {
             : await createChat(event.target.value);
 
           setSelectedChat(newChat);
-          event.target.value = '';
+          setContent('');
           setLoading(false);
 
           if (!selectedChat?._id) fetchAllChats();
