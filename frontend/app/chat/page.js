@@ -9,6 +9,7 @@ import DeleteIcon from '../components/icons/DeleteIcon';
 import { CHAT_ROLES } from '../utils/constant';
 import MicrophoneIcon from '../components/icons/MicrophoneIcon';
 import StopIcon from '../components/icons/StopIcon';
+import VolumnIcon from '../components/icons/VolumnIcon';
 
 export default function Chat() {
   const [chats, setChats] = useState([]);
@@ -149,6 +150,14 @@ export default function Chat() {
     }
   };
 
+  const handleSpeaking = (text, index) => {
+    const synth = window.speechSynthesis;
+    const voices = synth.getVoices();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.voice = voices[index % 2];
+    synth.speak(utterance);
+  };
+
   return (
     <div className="grid grid-cols-12 h-full" suppressHydrationWarning={true}>
       <div className="col-span-3 bg-slate-50 h-full flex flex-col">
@@ -185,15 +194,21 @@ export default function Chat() {
           className="flex flex-col justify-start grow mb-8 overflow-y-auto max-h-screen-80"
           id="chatbox"
         >
-          {messages.map((msg) => (
+          {messages.map((msg, index) => (
             <div
               key={msg._id}
-              className={`p-4 border-gray-300 rounded-xl border-2 mt-4 w-5/6 ${
+              className={`p-4 border-gray-300 rounded-xl border-2 mt-4 w-5/6 relative group ${
                 msg.role === CHAT_ROLES.USER ? 'self-start' : 'self-end'
               }`}
               hidden={msg.role === CHAT_ROLES.SYSTEM}
             >
               <span className="capitalize">{msg.role}</span>: {msg.content}
+              <button
+                className="hidden group-hover:flex absolute right-2 bottom-1/2 translate-y-1/2 p-3 bg-slate-200 cursor-pointer opacity-70 rounded-full"
+                onClick={() => handleSpeaking(msg.content, index)}
+              >
+                <VolumnIcon />
+              </button>
             </div>
           ))}
         </div>
