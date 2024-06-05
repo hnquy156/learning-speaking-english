@@ -17,9 +17,8 @@
 }
 
 body {
-  min-height: 100vh;
-  height: 100vh;
   color: rgb(var(--foreground-rgb));
+  height: 100vh;
   display: flex;
   flex-direction: column;
   background: linear-gradient(
@@ -42,4 +41,5 @@ body {
 
 .max-h-screen-80 {
   max-height: 80vh;
+  height: 100%;
 }

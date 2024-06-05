@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { createChat, deleteChat, getChat, getChats, updateChat } from './api';
 import Spinner from '../components/Spinner';
 import DeleteIcon from '../components/icons/DeleteIcon';
+import { CHAT_ROLES } from '../utils/constant';
 
 export default function Chat() {
   const [chats, setChats] = useState([]);
@@ -127,10 +128,10 @@ export default function Chat() {
           {messages.map((msg) => (
             <div
               key={msg._id}
-              className={`p-4 border-gray-300 rounded-xl border-2 mt-4 w-5/6 self-${
-                msg.role === 'user' ? 'start' : 'end'
+              className={`p-4 border-gray-300 rounded-xl border-2 mt-4 w-5/6 ${
+                msg.role === CHAT_ROLES.USER ? 'self-start' : 'self-end'
               }`}
-              hidden={msg.role === 'system'}
+              hidden={msg.role === CHAT_ROLES.SYSTEM}
             >
               <span className="capitalize">{msg.role}</span>: {msg.content}
             </div>
