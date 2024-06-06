@@ -3,13 +3,19 @@ import { useEffect, useRef, useState } from 'react';
 import SpeechRecognition, {
   useSpeechRecognition,
 } from 'react-speech-recognition';
-import { createChat, deleteChat, getChat, getChats, updateChat } from './api';
-import Spinner from '../../components/Spinner';
-import DeleteIcon from '../../components/icons/DeleteIcon';
-import { CHAT_ROLES } from '../../utils/constant';
-import MicrophoneIcon from '../../components/icons/MicrophoneIcon';
-import StopIcon from '../../components/icons/StopIcon';
-import VolumnIcon from '../../components/icons/VolumnIcon';
+import {
+  createChat,
+  deleteChat,
+  getChat,
+  getChats,
+  updateChat,
+} from '@/utils/api';
+import Spinner from '@/components/Spinner';
+import DeleteIcon from '@/components/icons/DeleteIcon';
+import { CHAT_ROLES } from '@/utils/constant';
+import MicrophoneIcon from '@/components/icons/MicrophoneIcon';
+import StopIcon from '@/components/icons/StopIcon';
+import VolumnIcon from '@/components/icons/VolumnIcon';
 import Header from '@/components/Header';
 
 export default function Chat() {

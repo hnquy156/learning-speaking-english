@@ -1,5 +1,5 @@
-import { API_PREFIX } from '../../utils/constant';
-import { deleteData, postData, putData } from '../../utils/utils';
+import { API_PREFIX } from './constant';
+import { deleteData, postData, putData } from './utils';
 
 export const getChats = async () => {
   const res = await fetch(`${API_PREFIX}/chats`);
