@@ -34,6 +34,7 @@ const Chat = () => {
   const [content, setContent] = useState('');
   const recordingTimeout = useRef(null);
   const finalTranscriptRef = useRef('');
+  const speechSynthesisRef = useRef(null);
 
   useEffect(() => {
     fetchAllChats();
@@ -160,7 +161,13 @@ const Chat = () => {
   };
 
   const handleSpeaking = (text, index) => {
-    const synth = window.speechSynthesis;
+    let synth = speechSynthesisRef.current;
+    if (synth) {
+      synth.cancel();
+    } else {
+      synth = window.speechSynthesis;
+      speechSynthesisRef.current = synth;
+    }
     const voices = synth.getVoices();
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.voice = voices[index % 2];
