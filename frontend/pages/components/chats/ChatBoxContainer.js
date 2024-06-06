@@ -19,12 +19,10 @@ const ChatBoxContainer = ({
     listening,
     resetTranscript,
     browserSupportsSpeechRecognition,
-    finalTranscript,
     interimTranscript,
     transcript,
   } = useSpeechRecognition();
   const recordingTimeout = useRef(null);
-  const finalTranscriptRef = useRef('');
   const speechSynthesisRef = useRef(null);
   const [loading, setLoading] = useState(false);
   const [content, setContent] = useState('');
@@ -53,10 +51,6 @@ const ChatBoxContainer = ({
     }
   }, [interimTranscript]);
 
-  useEffect(() => {
-    finalTranscriptRef.current = finalTranscript;
-  }, [finalTranscript]);
-
   const extendRecording = () => {
     if (recordingTimeout.current) {
       clearTimeout(recordingTimeout.current);
@@ -69,7 +63,7 @@ const ChatBoxContainer = ({
       clearTimeout(recordingTimeout.current);
       recordingTimeout.current = null;
     }
-    setContent((c) => `${c} ${finalTranscriptRef.current}`.trim());
+    setContent(`${content} ${transcript}`.trim());
     SpeechRecognition.stopListening();
     resetTranscript();
   };
