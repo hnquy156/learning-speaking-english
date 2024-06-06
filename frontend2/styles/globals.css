@@ -34,3 +34,16 @@ body {
     text-wrap: balance;
   }
 }
+
+.my-header {
+  height: 40px;
+}
+
+.chat-container {
+  height: calc(100vh - 40px);
+}
+
+.max-h-screen-80 {
+  max-height: 76vh;
+  height: 100%;
+}

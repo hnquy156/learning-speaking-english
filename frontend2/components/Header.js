@@ -1,13 +1,13 @@
 'use client';
 import Link from 'next/link';
-import { NAV_PATHS } from './utils/constant';
 import { usePathname } from 'next/navigation';
+import { NAV_PATHS } from '../utils/constant';
 
 export default function Header() {
   const pathname = usePathname();
 
   return (
-    <nav className="flex justify-center space-x-4">
+    <nav className="flex justify-center space-x-4 my-header">
       {NAV_PATHS.map((n) => (
         <Link
           href={n.href}
