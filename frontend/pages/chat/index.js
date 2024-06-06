@@ -105,13 +105,15 @@ const Chat = () => {
       if (event.key === 'Enter') {
         if (!event.shiftKey) {
           event.preventDefault();
+          const content = event.target.value.trim();
           console.log(
-            `Submit chat to server: ID - ${selectedChat?._id} - Content: ${event.target.value}`
+            `Submit chat to server: ID - ${selectedChat?._id} - Content: ${content}`
           );
+          if (!content) return;
           setLoading(true);
           const newChat = selectedChat?._id
-            ? await updateChat(selectedChat._id, event.target.value)
-            : await createChat(event.target.value);
+            ? await updateChat(selectedChat._id, content)
+            : await createChat(content);
 
           setSelectedChat(newChat);
           setContent('');
