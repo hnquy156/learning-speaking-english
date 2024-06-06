@@ -1,3 +1,4 @@
+'use client';
 import { useEffect, useRef, useState } from 'react';
 import SpeechRecognition, {
   useSpeechRecognition,
@@ -16,9 +17,8 @@ import MicrophoneIcon from '@/components/icons/MicrophoneIcon';
 import StopIcon from '@/components/icons/StopIcon';
 import VolumnIcon from '@/components/icons/VolumnIcon';
 import Header from '@/components/Header';
-import dynamic from 'next/dynamic';
 
-const Chat = () => {
+export default function Chat() {
   const {
     listening,
     resetTranscript,
@@ -32,6 +32,11 @@ const Chat = () => {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [content, setContent] = useState('');
+  const [textScript, setTextScript] = useState('');
+  const [isListening, setIsListening] = useState(false);
+  const [isSupportSpeech, setIsSupportSpeech] = useState(
+    browserSupportsSpeechRecognition
+  );
   const recordingTimeout = useRef(null);
   const finalTranscriptRef = useRef('');
 
@@ -63,6 +68,14 @@ const Chat = () => {
     }, 300);
     return () => clearTimeout(timeout);
   }, [selectedChat]);
+
+  useEffect(() => {
+    setIsListening(listening);
+  }, [listening]);
+
+  useEffect(() => {
+    setTextScript(transcript);
+  }, [transcript]);
 
   useEffect(() => {
     if (interimTranscript && listening) {
@@ -168,7 +181,10 @@ const Chat = () => {
   return (
     <div className="h-screen">
       <Header />
-      <div className="grid grid-cols-12 chat-container">
+      <div
+        className="grid grid-cols-12 chat-container"
+        // suppressHydrationWarning={true}
+      >
         <div className="col-span-3 bg-slate-50 h-full flex flex-col">
           <button
             className="self-center border-gray-300 border-2 rounded-lg p-1 m-2 w-5/6 hover:bg-slate-100"
@@ -221,12 +237,12 @@ const Chat = () => {
               </div>
             ))}
           </div>
-          {browserSupportsSpeechRecognition && (
+          {isSupportSpeech && (
             <button
               className="self-center hover:bg-slate-100 opacity-70 rounded-full p-2"
               onClick={handleRecord}
             >
-              {listening ? <StopIcon /> : <MicrophoneIcon />}
+              {isListening ? <StopIcon /> : <MicrophoneIcon />}
             </button>
           )}
           <div className="min-h-20 max-h-60 w-4/6 self-center relative">
@@ -235,8 +251,8 @@ const Chat = () => {
               className="border-solid border-2 focus:outline-none focus:border-sky-500 rounded-xl w-full h-full p-4"
               rows={3}
               onKeyDown={handleKeyDown}
-              disabled={loading || listening}
-              value={content + (transcript ? ` ${transcript}` : '')}
+              disabled={loading || isListening}
+              value={content + (textScript ? ` ${textScript}` : '')}
               onChange={(e) => setContent(e.target.value)}
               onFocus={resetTranscript}
             />
@@ -250,8 +266,4 @@ const Chat = () => {
       </div>
     </div>
   );
-};
-
-const NoSSR = dynamic(() => Promise.resolve(Chat), { ssr: false });
-
-export default () => <NoSSR />;
+}
