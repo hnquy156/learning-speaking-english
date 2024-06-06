@@ -17,6 +17,7 @@ import StopIcon from '@/components/icons/StopIcon';
 import VolumnIcon from '@/components/icons/VolumnIcon';
 import Header from '@/components/Header';
 import dynamic from 'next/dynamic';
+import Head from 'next/head';
 
 const Chat = () => {
   const {
@@ -176,6 +177,10 @@ const Chat = () => {
 
   return (
     <div className="h-screen">
+      <Head>
+        <title>Chat</title>
+        <meta property="og:title" content="Chat" key="title" />
+      </Head>
       <Header />
       <div className="grid grid-cols-12 chat-container">
         <div className="col-span-3 bg-slate-50 h-full flex flex-col">
