@@ -15,7 +15,6 @@ import { CHAT_ROLES } from '@/utils/constant';
 import MicrophoneIcon from '@/components/icons/MicrophoneIcon';
 import StopIcon from '@/components/icons/StopIcon';
 import VolumnIcon from '@/components/icons/VolumnIcon';
-import Header from '@/components/Header';
 import dynamic from 'next/dynamic';
 import Head from 'next/head';
 
@@ -176,13 +175,12 @@ const Chat = () => {
   };
 
   return (
-    <div className="h-screen">
+    <div className="chat-container">
       <Head>
         <title>Chat</title>
         <meta property="og:title" content="Chat" key="title" />
       </Head>
-      <Header />
-      <div className="grid grid-cols-12 chat-container">
+      <div className="grid grid-cols-12 h-full">
         <div className="col-span-3 bg-slate-50 h-full flex flex-col">
           <button
             className="self-center border-gray-300 border-2 rounded-lg p-1 m-2 w-5/6 hover:bg-slate-100"
