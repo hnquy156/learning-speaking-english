@@ -1,60 +1,17 @@
-import { useEffect, useRef, useState } from 'react';
-import SpeechRecognition, {
-  useSpeechRecognition,
-} from 'react-speech-recognition';
-import {
-  createChat,
-  deleteChat,
-  getChat,
-  getChats,
-  updateChat,
-} from '@/utils/api';
-import Spinner from '@/components/Spinner';
-import DeleteIcon from '@/components/icons/DeleteIcon';
-import { CHAT_ROLES } from '@/utils/constant';
-import MicrophoneIcon from '@/components/icons/MicrophoneIcon';
-import StopIcon from '@/components/icons/StopIcon';
-import VolumnIcon from '@/components/icons/VolumnIcon';
+import { useEffect, useState } from 'react';
+import { deleteChat, getChat, getChats } from '@/utils/api';
 import dynamic from 'next/dynamic';
 import Head from 'next/head';
 import ChatSideBar from '../components/chats/ChatSideBar';
+import ChatBoxContainer from '../components/chats/ChatBoxContainer';
 
 const Chat = () => {
-  const {
-    listening,
-    resetTranscript,
-    browserSupportsSpeechRecognition,
-    finalTranscript,
-    interimTranscript,
-    transcript,
-  } = useSpeechRecognition();
   const [chats, setChats] = useState([]);
   const [selectedChat, setSelectedChat] = useState(null);
   const [messages, setMessages] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [content, setContent] = useState('');
-  const recordingTimeout = useRef(null);
-  const finalTranscriptRef = useRef('');
-  const speechSynthesisRef = useRef(null);
 
   useEffect(() => {
     fetchAllChats();
-
-    const text = document.getElementById('text');
-    const resize = () => {
-      text.style.height = 'auto';
-      text.style.height = text.scrollHeight + 'px';
-    };
-    text?.addEventListener('input', resize);
-
-    return () => {
-      text?.removeEventListener('input', resize);
-      if (recordingTimeout.current) {
-        clearTimeout(recordingTimeout.current);
-        SpeechRecognition.stopListening();
-        resetTranscript();
-      }
-    };
   }, []);
 
   useEffect(() => {
@@ -66,33 +23,6 @@ const Chat = () => {
     return () => clearTimeout(timeout);
   }, [selectedChat]);
 
-  useEffect(() => {
-    if (interimTranscript && listening) {
-      extendRecording();
-    }
-  }, [interimTranscript]);
-
-  useEffect(() => {
-    finalTranscriptRef.current = finalTranscript;
-  }, [finalTranscript]);
-
-  const extendRecording = () => {
-    if (recordingTimeout.current) {
-      clearTimeout(recordingTimeout.current);
-    }
-    recordingTimeout.current = setTimeout(handleStopRecording, 3000);
-  };
-
-  const handleStopRecording = () => {
-    if (recordingTimeout.current) {
-      clearTimeout(recordingTimeout.current);
-      recordingTimeout.current = null;
-    }
-    setContent((c) => `${c} ${finalTranscriptRef.current}`.trim());
-    SpeechRecognition.stopListening();
-    resetTranscript();
-  };
-
   const fetchAllChats = async () => {
     try {
       const res = await getChats();
@@ -102,27 +32,13 @@ const Chat = () => {
     }
   };
 
-  const handleKeyDown = async (event) => {
+  const handleDeleteChat = async (id) => {
     try {
-      if (event.key === 'Enter') {
-        if (!event.shiftKey) {
-          event.preventDefault();
-          const content = event.target.value.trim();
-          console.log(
-            `Submit chat to server: ID - ${selectedChat?._id} - Content: ${content}`
-          );
-          if (!content) return;
-          setLoading(true);
-          const newChat = selectedChat?._id
-            ? await updateChat(selectedChat._id, content)
-            : await createChat(content);
-
-          setSelectedChat(newChat);
-          setContent('');
-          setLoading(false);
-
-          if (!selectedChat?._id) fetchAllChats();
-        }
+      const res = window.confirm('Are you sure to delete this chat?');
+      if (res) {
+        await deleteChat(id);
+        await fetchAllChats();
+        if (id === selectedChat?._id) setSelectedChat(null);
       }
     } catch (error) {
       console.error(error);
@@ -142,43 +58,6 @@ const Chat = () => {
     setSelectedChat(null);
   };
 
-  const handleDeleteChat = async (id) => {
-    try {
-      const res = window.confirm('Are you sure to delete this chat?');
-      if (res) {
-        await deleteChat(id);
-        await fetchAllChats();
-        if (id === selectedChat?._id) setSelectedChat(null);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const handleRecord = async () => {
-    if (listening) {
-      handleStopRecording();
-    } else {
-      resetTranscript();
-      SpeechRecognition.startListening({ continuous: true });
-      extendRecording();
-    }
-  };
-
-  const handleSpeaking = (text, index) => {
-    let synth = speechSynthesisRef.current;
-    if (synth) {
-      synth.cancel();
-    } else {
-      synth = window.speechSynthesis;
-      speechSynthesisRef.current = synth;
-    }
-    const voices = synth.getVoices();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.voice = voices[index % 2];
-    synth.speak(utterance);
-  };
-
   return (
     <div className="chat-container">
       <Head>
@@ -195,54 +74,12 @@ const Chat = () => {
           />
         </div>
         <div className="col-span-9 bg-white h-full flex flex-col justify-between p-4">
-          <div className="font-bold text-2xl">Chat Content</div>
-          <div
-            className="flex flex-col justify-start grow mb-8 overflow-y-auto max-h-screen-80"
-            id="chatbox"
-          >
-            {messages.map((msg, index) => (
-              <div
-                key={msg._id}
-                className={`p-4 border-gray-300 rounded-xl border-2 mt-4 w-5/6 relative group ${
-                  msg.role === CHAT_ROLES.USER ? 'self-start' : 'self-end'
-                }`}
-                hidden={msg.role === CHAT_ROLES.SYSTEM}
-              >
-                <span className="capitalize">{msg.role}</span>: {msg.content}
-                <button
-                  className="hidden group-hover:flex absolute right-2 bottom-1/2 translate-y-1/2 p-3 bg-slate-200 cursor-pointer opacity-70 rounded-full"
-                  onClick={() => handleSpeaking(msg.content, index)}
-                >
-                  <VolumnIcon />
-                </button>
-              </div>
-            ))}
-          </div>
-          {browserSupportsSpeechRecognition && (
-            <button
-              className="self-center hover:bg-slate-100 opacity-70 rounded-full p-2"
-              onClick={handleRecord}
-            >
-              {listening ? <StopIcon /> : <MicrophoneIcon />}
-            </button>
-          )}
-          <div className="min-h-20 max-h-60 w-4/6 self-center relative">
-            <textarea
-              id="text"
-              className="border-solid border-2 focus:outline-none focus:border-sky-500 rounded-xl w-full h-full p-4"
-              rows={3}
-              onKeyDown={handleKeyDown}
-              disabled={loading || listening}
-              value={content + (transcript ? ` ${transcript}` : '')}
-              onChange={(e) => setContent(e.target.value)}
-              onFocus={resetTranscript}
-            />
-            {loading && (
-              <div className="self-center absolute right-1/2 bottom-1/2 translate-y-1/2 translate-x-1/2">
-                <Spinner />
-              </div>
-            )}
-          </div>
+          <ChatBoxContainer
+            messages={messages}
+            fetchAllChats={fetchAllChats}
+            selectedChat={selectedChat}
+            setSelectedChat={setSelectedChat}
+          />
         </div>
       </div>
     </div>
