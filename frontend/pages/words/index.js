@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import Head from 'next/head';
-import { getWords } from '@/utils/api';
+import { deleteWord, getWords } from '@/utils/api';
 import moment from 'moment';
 
 const Word = () => {
@@ -16,6 +16,18 @@ const Word = () => {
       setWords(res.data);
     } catch (e) {
       console.error(e);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      const res = window.confirm('Are you sure you want to delete this word?');
+      if (res) {
+        await deleteWord(id);
+        await fetchWords();
+      }
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -70,6 +82,13 @@ const Word = () => {
                     class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
                   >
                     Edit
+                  </a>
+                  <a
+                    href="#"
+                    class="font-medium text-rose-600 dark:text-blue-500 hover:underline ml-4"
+                    onClick={() => handleDelete(word._id)}
+                  >
+                    Delete
                   </a>
                 </td>
               </tr>

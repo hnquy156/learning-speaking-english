@@ -47,3 +47,8 @@ export const createWord = async (word) => {
   const res = await postData(`${API_PREFIX}/words`, word);
   return res.data;
 };
+
+export const deleteWord = async (id) => {
+  const res = await deleteData(`${API_PREFIX}/words/${id}`);
+  return res.data;
+};
