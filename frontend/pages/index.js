@@ -1,13 +1,12 @@
-import Head from 'next/head';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 
 export default function Home() {
-  return (
-    <main>
-      <Head>
-        <title>Home</title>
-        <meta property="og:title" content="Home" key="title" />
-      </Head>
-      <h1>HOME</h1>
-    </main>
-  );
+  const router = useRouter();
+
+  useEffect(() => {
+    router.push('/chat');
+  }, [router]);
+
+  return null;
 }

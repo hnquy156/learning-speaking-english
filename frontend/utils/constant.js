@@ -1,9 +1,9 @@
 export const NAV_PATHS = [
-  {
-    id: 'home',
-    href: '/',
-    name: 'Home',
-  },
+  // {
+  //   id: 'home',
+  //   href: '/',
+  //   name: 'Home',
+  // },
   {
     id: 'chat',
     href: '/chat',
