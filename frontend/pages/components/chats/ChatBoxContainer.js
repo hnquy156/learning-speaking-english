@@ -2,7 +2,11 @@ import Spinner from '@/components/Spinner';
 import MicrophoneIcon from '@/components/icons/MicrophoneIcon';
 import StopIcon from '@/components/icons/StopIcon';
 import VolumnIcon from '@/components/icons/VolumnIcon';
-import { createChat, updateChat } from '@/utils/api';
+import {
+  createChat,
+  getTranslatedWordFromGoogle,
+  updateChat,
+} from '@/utils/api';
 import { CHAT_ROLES } from '@/utils/constant';
 import { useEffect, useRef, useState } from 'react';
 import SpeechRecognition, {
@@ -124,8 +128,16 @@ const ChatBoxContainer = ({
     return parse(msg.replace(/\b(\w+?)\b/g, '<span>$1</span>'));
   };
 
-  const handleClickWord = (e) => {
-    if (e.target.nodeName === 'SPAN') console.log(e.target.textContent);
+  const handleClickWord = async (e) => {
+    try {
+      if (e.target.nodeName === 'SPAN') {
+        console.log(e.target.textContent);
+        const res = await getTranslatedWordFromGoogle(e.target.textContent);
+        console.log('🚀  res:', res.data);
+      }
+    } catch (err) {
+      console.error('handleClickWord', err);
+    }
   };
 
   return (

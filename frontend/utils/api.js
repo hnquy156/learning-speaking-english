@@ -25,3 +25,8 @@ export const deleteChat = async (id) => {
   const res = await deleteData(`${API_PREFIX}/chats/${id}`);
   return res.data;
 };
+
+export const getTranslatedWordFromGoogle = async (content) => {
+  const res = await fetch(`${API_PREFIX}/dictionaries/google?q=${content}`);
+  return res.json();
+};
