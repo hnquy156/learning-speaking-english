@@ -30,3 +30,10 @@ export const getTranslatedWordFromGoogle = async (content) => {
   const res = await fetch(`${API_PREFIX}/dictionaries/google?q=${content}`);
   return res.json();
 };
+
+export const getSpeakingFromGoogle = async (content) => {
+  const res = await fetch(
+    `${API_PREFIX}/dictionaries/google/speak?q=${content}`
+  );
+  return res.json();
+};

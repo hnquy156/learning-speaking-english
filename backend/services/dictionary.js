@@ -4,4 +4,8 @@ const translateByGG = (content) => {
   return GoogleTranslateUtils.translateToVI(content);
 };
 
-module.exports = { translateByGG };
+const speakByGG = (content) => {
+  return GoogleTranslateUtils.speakToEN(content);
+};
+
+module.exports = { translateByGG, speakByGG };
