@@ -8,6 +8,7 @@ import { useEffect, useRef, useState } from 'react';
 import SpeechRecognition, {
   useSpeechRecognition,
 } from 'react-speech-recognition';
+import parse from 'html-react-parser';
 
 const ChatBoxContainer = ({
   messages,
@@ -119,6 +120,14 @@ const ChatBoxContainer = ({
     synth.speak(utterance);
   };
 
+  const renderContent = (msg) => {
+    return parse(msg.replace(/\b(\w+?)\b/g, '<span>$1</span>'));
+  };
+
+  const handleClickWord = (e) => {
+    if (e.target.nodeName === 'SPAN') console.log(e.target.textContent);
+  };
+
   return (
     <>
       <div className="font-bold text-2xl">Chat Content</div>
@@ -129,14 +138,17 @@ const ChatBoxContainer = ({
         {messages.map((msg, index) => (
           <div
             key={msg._id}
-            className={`p-4 border-gray-300 rounded-xl border-2 mt-4 w-5/6 relative group ${
+            className={`p-4 pr-11 border-gray-300 rounded-xl border-2 mt-4 w-5/6 relative ${
               msg.role === CHAT_ROLES.USER ? 'self-start' : 'self-end'
             }`}
             hidden={msg.role === CHAT_ROLES.SYSTEM}
           >
-            <span className="capitalize">{msg.role}</span>: {msg.content}
+            <span className="capitalize">{msg.role}</span>:{' '}
+            <div className="inline" onDoubleClick={handleClickWord}>
+              {renderContent(msg.content)}
+            </div>
             <button
-              className="hidden group-hover:flex absolute right-2 bottom-1/2 translate-y-1/2 p-3 bg-slate-200 cursor-pointer opacity-70 rounded-full"
+              className="absolute right-1 bottom-1/2 translate-y-1/2 p-3 bg-slate-200 hover:bg-slate-300 cursor-pointer opacity-70 rounded-full"
               onClick={() => handleSpeaking(msg.content, index)}
             >
               <VolumnIcon />
