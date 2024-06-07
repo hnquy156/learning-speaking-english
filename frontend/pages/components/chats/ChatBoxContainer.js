@@ -13,6 +13,7 @@ import SpeechRecognition, {
   useSpeechRecognition,
 } from 'react-speech-recognition';
 import parse from 'html-react-parser';
+import TranslateModal from './TranslateModal';
 
 const ChatBoxContainer = ({
   messages,
@@ -31,6 +32,8 @@ const ChatBoxContainer = ({
   const speechSynthesisRef = useRef(null);
   const [loading, setLoading] = useState(false);
   const [content, setContent] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedWord, setSelectedWord] = useState({});
 
   useEffect(() => {
     const text = document.getElementById('text');
@@ -133,7 +136,8 @@ const ChatBoxContainer = ({
       if (e.target.nodeName === 'SPAN') {
         console.log(e.target.textContent);
         const res = await getTranslatedWordFromGoogle(e.target.textContent);
-        console.log('🚀  res:', res.data);
+        setIsModalOpen(true);
+        setSelectedWord(res.data);
       }
     } catch (err) {
       console.error('handleClickWord', err);
@@ -193,6 +197,12 @@ const ChatBoxContainer = ({
           </div>
         )}
       </div>
+      <TranslateModal
+        isOpen={isModalOpen && selectedWord}
+        onClose={() => setIsModalOpen(false)}
+        title="Translate Word"
+        {...selectedWord}
+      />
     </>
   );
 };
