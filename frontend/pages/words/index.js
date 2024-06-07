@@ -1,13 +1,27 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Head from 'next/head';
-import { deleteWord, getWords } from '@/utils/api';
+import { deleteWord, getSpeakingFromGoogle, getWords } from '@/utils/api';
 import moment from 'moment';
 import EditModal from '../components/words/EditModal';
+import VolumnIcon from '@/components/icons/VolumnIcon';
 
 const Word = () => {
   const [words, setWords] = useState([]);
   const [selectedWord, setSelectedWord] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const audioRef = useRef(null);
+
+  const handleSpeaking = async (original) => {
+    try {
+      if (audioRef.current) {
+        const res = await getSpeakingFromGoogle(original);
+        audioRef.current.src = `data:audio/mp3;base64,${res.data}`;
+        audioRef.current.play();
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   useEffect(() => {
     fetchWords();
@@ -99,6 +113,12 @@ const Word = () => {
                   >
                     Delete
                   </a>
+                  <button
+                    className="p-3 bg-slate-200 hover:bg-slate-300 cursor-pointer opacity-70 rounded-full my-2"
+                    onClick={() => handleSpeaking(word.original)}
+                  >
+                    <VolumnIcon />
+                  </button>
                 </td>
               </tr>
             ))}
@@ -113,6 +133,7 @@ const Word = () => {
           fetchWords={fetchWords}
         />
       )}
+      <audio ref={audioRef} hidden />
     </div>
   );
 };
