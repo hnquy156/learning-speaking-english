@@ -48,6 +48,11 @@ export const createWord = async (word) => {
   return res.data;
 };
 
+export const updateWord = async (id, word) => {
+  const res = await putData(`${API_PREFIX}/words/${id}`, word);
+  return res.data;
+};
+
 export const deleteWord = async (id) => {
   const res = await deleteData(`${API_PREFIX}/words/${id}`);
   return res.data;
