@@ -105,8 +105,8 @@ const Word = () => {
       <div className="flex w-full my-3">
         <div className="w-2/4">
           <label
-            for="search"
-            class="block text-sm font-medium text-gray-700 mb-2"
+            htmlFor="search"
+            className="block text-sm font-medium text-gray-700 mb-2"
           >
             Search
           </label>
@@ -119,17 +119,17 @@ const Word = () => {
             placeholder="Search by Word, Meaning"
           />
         </div>
-        <div class="w-2/4">
+        <div className="w-2/4">
           <label
-            for="options"
-            class="block text-sm font-medium text-gray-700 mb-2"
+            htmlFor="options"
+            className="block text-sm font-medium text-gray-700 mb-2"
           >
             Bookmark
           </label>
           <select
             id="options"
             name="options"
-            class="block w-3/4 pl-3 pr-10 py-3 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+            className="block w-3/4 pl-3 pr-10 py-3 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
             value={bookmarked}
             onChange={(e) => setBookmarked(e.target.value)}
           >
