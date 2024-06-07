@@ -1,8 +1,8 @@
 import Link from 'next/link';
 import Modal from '../Modal';
 import VolumnIcon from '@/components/icons/VolumnIcon';
-import { useRef } from 'react';
-import { getSpeakingFromGoogle } from '@/utils/api';
+import { useRef, useState } from 'react';
+import { createWord, getSpeakingFromGoogle } from '@/utils/api';
 
 const TranslateModal = ({
   isOpen,
@@ -12,6 +12,7 @@ const TranslateModal = ({
   original = '',
 }) => {
   const audioRef = useRef(null);
+  const [message, setMessage] = useState({ color: 'green', message: '' });
 
   const handleSpeaking = async () => {
     try {
@@ -27,11 +28,34 @@ const TranslateModal = ({
     }
   };
 
+  const handleClose = () => {
+    setMessage({ color: 'text-green-600', message: '' });
+    onClose();
+  };
+
+  const handleSaveWord = async () => {
+    try {
+      await createWord({ original, translated });
+      setMessage({
+        message: 'Save word successfully',
+        color: 'text-green-600',
+      });
+    } catch (error) {
+      console.error(error);
+      setMessage({ message: error.message, color: 'text-rose-600' });
+    }
+  };
+
   const createURL = (text) =>
     `https://translate.google.com/?hl=vi&sl=en&tl=vi&op=translate&text=${text}`;
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Translate Word">
+    <Modal
+      isOpen={isOpen}
+      onClose={handleClose}
+      onOk={handleSaveWord}
+      title="Translate Word"
+    >
       <div className="text-xl mb-2 font-medium capitalize">
         Word: {original}
       </div>
@@ -45,12 +69,17 @@ const TranslateModal = ({
       >
         <VolumnIcon />
       </button>
-      <audio ref={audioRef} hidden/>
-      <div className="mt-4 text-blue-600 font-medium text-xl">
+      <audio ref={audioRef} hidden />
+      <div className="my-4 text-blue-600 font-medium text-xl">
         <Link href={createURL(original)} target="_blank">
           See detailed translation on Google Translate
         </Link>
       </div>
+      {message.message && (
+        <div className={`${message.color} font-medium text-xl`}>
+          {message.message}
+        </div>
+      )}
     </Modal>
   );
 };

@@ -37,3 +37,8 @@ export const getSpeakingFromGoogle = async (content) => {
   );
   return res.json();
 };
+
+export const createWord = async (word) => {
+  const res = await postData(`${API_PREFIX}/words`, word);
+  return res.data;
+};
