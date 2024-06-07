@@ -1,11 +1,17 @@
 import { useEffect, useRef, useState } from 'react';
 import Head from 'next/head';
-import { deleteWord, getSpeakingFromGoogle, getWords } from '@/utils/api';
+import {
+  deleteWord,
+  getSpeakingFromGoogle,
+  getWords,
+  updateWord,
+} from '@/utils/api';
 import moment from 'moment';
 import EditModal from '../components/words/EditModal';
 import VolumnIcon from '@/components/icons/VolumnIcon';
 import DeleteIcon from '@/components/icons/DeleteIcon';
 import EditIcon from '@/components/icons/EditIcon';
+import BookmarkIcon from '@/components/icons/BookmarkIcon';
 
 const Word = () => {
   const [words, setWords] = useState([]);
@@ -20,6 +26,15 @@ const Word = () => {
         audioRef.current.src = `data:audio/mp3;base64,${res.data}`;
         audioRef.current.play();
       }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleChangeBookmark = async (word) => {
+    try {
+      await updateWord(word._id, { ...word, bookmarked: !word.bookmarked });
+      await fetchWords();
     } catch (error) {
       console.error(error);
     }
@@ -79,9 +94,6 @@ const Word = () => {
                 Created at
               </th>
               <th scope="col" className="px-3 py-3">
-                Bookmark
-              </th>
-              <th scope="col" className="px-3 py-3">
                 Action
               </th>
             </tr>
@@ -108,7 +120,6 @@ const Word = () => {
                 <td className="px-3 py-4">
                   {moment(word.created_at).format('YYYY-MM-DD HH:mm:ss')}
                 </td>
-                <td className="px-3 py-4">{word.bookmarked}</td>
                 <td className="px-3 py-4">
                   <button
                     className="p-3 hover:bg-slate-300 opacity-70 rounded-full"
@@ -127,6 +138,12 @@ const Word = () => {
                     onClick={() => handleSpeaking(word.original)}
                   >
                     <VolumnIcon />
+                  </button>
+                  <button
+                    className="p-3 bg-slate-400 hover:bg-slate-500 opacity-70 rounded ml-4"
+                    onClick={() => handleChangeBookmark(word)}
+                  >
+                    <BookmarkIcon active={word.bookmarked} />
                   </button>
                 </td>
               </tr>
