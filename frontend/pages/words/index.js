@@ -15,8 +15,11 @@ import BookmarkIcon from '@/components/icons/BookmarkIcon';
 
 const Word = () => {
   const [words, setWords] = useState([]);
+  const [searchedWords, setSearchedWords] = useState([]);
   const [selectedWord, setSelectedWord] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [search, setSearch] = useState('');
+  const [bookmarked, setBookmarked] = useState('');
   const audioRef = useRef(null);
 
   const handleSpeaking = async (original) => {
@@ -43,6 +46,28 @@ const Word = () => {
   useEffect(() => {
     fetchWords();
   }, []);
+
+  useEffect(() => {
+    const filterBySearch = (text, key) =>
+      text.toLowerCase().includes(key.toLowerCase().trim());
+    const filterCondition = (w) => {
+      return (
+        filterBySearch(w.original, search) ||
+        filterBySearch(w.translated, search)
+      );
+    };
+
+    let filterdWs = words;
+
+    if (search.trim()) {
+      filterdWs = words.filter(filterCondition);
+    }
+    if (bookmarked) {
+      const b = bookmarked === 'yes' ? true : false;
+      filterdWs = filterdWs.filter((w) => w.bookmarked === b);
+    }
+    setSearchedWords(filterdWs);
+  }, [search, words, bookmarked]);
 
   const fetchWords = async () => {
     try {
@@ -77,6 +102,43 @@ const Word = () => {
         <meta property="og:title" content="Words" key="title" />
       </Head>
       <div className="font-bold text-2xl mb-8">Word List</div>
+      <div className="flex w-full my-3">
+        <div className="w-2/4">
+          <label
+            for="search"
+            class="block text-sm font-medium text-gray-700 mb-2"
+          >
+            Search
+          </label>
+          <input
+            id="search"
+            className="border-2 p-2 rounded-lg  w-3/4"
+            onChange={(e) => setSearch(e.target.value)}
+            name="original"
+            value={search}
+            placeholder="Search by Word, Meaning"
+          />
+        </div>
+        <div class="w-2/4">
+          <label
+            for="options"
+            class="block text-sm font-medium text-gray-700 mb-2"
+          >
+            Bookmark
+          </label>
+          <select
+            id="options"
+            name="options"
+            class="block w-3/4 pl-3 pr-10 py-3 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+            value={bookmarked}
+            onChange={(e) => setBookmarked(e.target.value)}
+          >
+            <option value="">All</option>
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+          </select>
+        </div>
+      </div>
       <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
         <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
           <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -99,7 +161,7 @@ const Word = () => {
             </tr>
           </thead>
           <tbody>
-            {words.map((word, index) => (
+            {searchedWords.map((word, index) => (
               <tr
                 key={word._id}
                 className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700"
@@ -148,6 +210,13 @@ const Word = () => {
                 </td>
               </tr>
             ))}
+            {searchedWords.length === 0 && (
+              <tr>
+                <td className="p-6" colSpan={5}>
+                  NO DATA FOUND
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
