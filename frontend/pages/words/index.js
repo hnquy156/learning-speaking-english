@@ -4,6 +4,8 @@ import { deleteWord, getSpeakingFromGoogle, getWords } from '@/utils/api';
 import moment from 'moment';
 import EditModal from '../components/words/EditModal';
 import VolumnIcon from '@/components/icons/VolumnIcon';
+import DeleteIcon from '@/components/icons/DeleteIcon';
+import EditIcon from '@/components/icons/EditIcon';
 
 const Word = () => {
   const [words, setWords] = useState([]);
@@ -65,6 +67,9 @@ const Word = () => {
           <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
               <th scope="col" className="px-3 py-3">
+                No.
+              </th>
+              <th scope="col" className="px-3 py-3">
                 Word
               </th>
               <th scope="col" className="px-3 py-3">
@@ -82,11 +87,17 @@ const Word = () => {
             </tr>
           </thead>
           <tbody>
-            {words.map((word) => (
+            {words.map((word, index) => (
               <tr
                 key={word._id}
                 className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700"
               >
+                <th
+                  scope="row"
+                  className="px-3 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white capitalize"
+                >
+                  {index + 1}
+                </th>
                 <th
                   scope="row"
                   className="px-3 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white capitalize"
@@ -99,22 +110,20 @@ const Word = () => {
                 </td>
                 <td className="px-3 py-4">{word.bookmarked}</td>
                 <td className="px-3 py-4">
-                  <a
-                    href="#"
-                    className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                  <button
+                    className="p-3 hover:bg-slate-300 opacity-70 rounded-full"
                     onClick={() => handleEditWord(word)}
                   >
-                    Edit
-                  </a>
-                  <a
-                    href="#"
-                    className="font-medium text-rose-600 dark:text-blue-500 hover:underline ml-4"
+                    <EditIcon />
+                  </button>
+                  <button
+                    className="p-3 hover:bg-slate-300  opacity-70 rounded-full mx-4"
                     onClick={() => handleDelete(word._id)}
                   >
-                    Delete
-                  </a>
+                    <DeleteIcon />
+                  </button>
                   <button
-                    className="p-3 bg-slate-200 hover:bg-slate-300 cursor-pointer opacity-70 rounded-full my-2"
+                    className="p-3 hover:bg-slate-300  opacity-70 rounded-full"
                     onClick={() => handleSpeaking(word.original)}
                   >
                     <VolumnIcon />
